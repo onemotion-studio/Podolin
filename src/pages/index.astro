@@ -59,11 +59,26 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
 
     <main>
         <!-- Первый экран с разделенным слайдером (Hero Split) -->
-        <section class="relative min-h-screen md:h-screen flex flex-col md:grid md:grid-cols-2 bg-[#0a0a0a] pt-20 overflow-hidden">
+        <!-- Первый экран с разделенным слайдером (Hero Split) -->
+        <section class="relative min-h-[90vh] md:h-screen flex flex-col-reverse md:flex-row bg-[#0a0a0a] pt-20 overflow-hidden">
             
-            <!-- Левая половина: Смысловой блок -->
-            <div class="flex items-center justify-center px-8 py-16 md:py-0 border-b md:border-b-0 md:border-r border-neutral-900/60 z-20 bg-[#0a0a0a]">
-                <div class="max-w-lg w-full text-left space-y-8 md:pr-8">
+            <!-- Слайдер (на мобильном будет сверху, на десктопе — правая часть) -->
+            <div class="relative bg-[#0d0d0d] h-[50vh] md:h-full md:w-1/2 overflow-hidden z-10 flex-1">
+                <div class="absolute inset-0 bg-radial from-neutral-900/40 to-transparent pointer-events-none z-10"></div>
+                
+                {artworks.map((art, index) => (
+                    <img 
+                        src={art.image} 
+                        alt={`Yuri Podolin masterpiece ${art.id}`} 
+                        class={`hero-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100 z-0' : 'opacity-0 -z-10'}`}
+                        loading={index < 3 ? "eager" : "lazy"}
+                    />
+                ))}
+            </div>
+
+            <!-- Блок с текстом (на мобильном будет снизу, на десктопе — левая часть) -->
+            <div class="flex items-center justify-center px-8 py-16 md:py-0 md:w-1/2 border-b md:border-b-0 md:border-l border-neutral-900/60 z-20 bg-[#0a0a0a] flex-1">
+                <div class="max-w-lg w-full text-left space-y-8 md:pl-8">
                     <span class="block text-xs tracking-[0.3em] uppercase text-neutral-500 font-medium">
                         <span class="lang-ru">Частное собрание</span>
                         <span class="lang-en">Private Collection</span>
@@ -80,32 +95,13 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
                     </p>
                     
                     <div class="pt-4">
-                        <a href="#gallery" class="reveal inline-block border border-neutral-600 text-neutral-100 px-8 py-3 text-xs font-medium tracking-[0.2em] uppercase hover:bg-neutral-800 hover:border-neutral-500 transition-all duration-300 rounded-md">
-                            <span class="lang-ru">Увидеть коллекцию</span>
-                            <span class="lang-en">Explore Collection</span>
+                        <a href="#gallery" class="inline-block border border-neutral-600 text-neutral-100 px-8 py-3 text-xs font-medium tracking-[0.2em] uppercase hover:bg-neutral-800 transition-all duration-300 rounded-md">
+                            <span class="lang-ru">Смотреть архив</span>
+                            <span class="lang-en">Explore Archive</span>
                         </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Правая половина: Интерактивный слайдер -->
-            <div class="relative bg-[#0d0d0d] h-[60vh] md:h-full overflow-hidden z-10">
-                
-                {artworks.map((art, index) => (
-                <div class="art-item group ...">
-                    <img 
-                        src={art.image} 
-                        alt={`Yuri Podolin masterpiece ${art.id}`} 
-                        /* Убрали max-w/max-h, добавили w-full h-full 
-                           object-cover заполнит всё пространство 
-                        */
-                        class={`hero-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100 z-0' : 'opacity-0 -z-10'}`}
-                        loading={index < 3 ? "eager" : "lazy"}
-                    />
-                </div>
-                ))}
-            </div>
-
         </section>
         
         <!-- Блок О художнике -->
@@ -255,8 +251,7 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
 
 
         // --- 2. АВТОМАТИЧЕСКИЙ СЛАЙДЕР ОБЛОЖКИ (HERO) ---
-        // Теперь скрипт автоматически подхватит все 51 фото
-        const slides = document.querySelectorAll('.hero-slide') as NodeListOf<HTMLElement>;
+        const slides = document.querySelectorAll('.hero-slide');
         let currentSlideIndex = 0;
 
         function runHeroSlider() {
@@ -281,7 +276,7 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
         // --- 3. ЛОГИКА ГАЛЕРЕИ (LIGHTBOX) ---
         const artItems = document.querySelectorAll('.art-item');
         const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+        const lightboxImg = document.getElementById('lightbox-img');
         const lightboxId = document.getElementById('lightbox-id');
         const lightboxCounter = document.getElementById('lightbox-counter');
         const lightboxBg = document.getElementById('lightbox-bg');
@@ -291,7 +286,7 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
 
         let currentIndex = 0;
 
-        function openLightbox(index: number) {
+        function openLightbox(index) {
             currentIndex = index;
             const item = artItems[currentIndex];
             const src = item.getAttribute('data-src') || '';
@@ -348,6 +343,18 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
                 if (e.key === 'ArrowLeft') showPrev();
             }
         });
+
+
+        // --- ЛОГИКА ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 <style is:global>
@@ -371,19 +378,4 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
     html[data-lang="en"] .lang-ru { display: none !important; }
     .lang-btn-active { background-color: #262626; color: #f5f5f5 !important; }
 </style>
-
-<script>
-    // ... (весь твой код скрипта оставляем как есть, просто в конец добавляем этот Observer)
-
-    // --- ЛОГИКА ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
 </html>
