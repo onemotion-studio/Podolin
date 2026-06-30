@@ -1,17 +1,389 @@
 ---
+import '../styles/global.css';
 
+// Автоматически генерируем массив из 51 работы (теперь для JPG)
+const artworks = Array.from({ length: 51 }, (_, index) => {
+  const num = String(index + 1).padStart(3, '0');
+  return {
+    id: `YP-${num}`,
+    image: `/art/yp-${num}.jpg`
+  };
+});
+
+// Теперь для слайдера на первом экране используем ВЕСЬ массив artworks
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="ru" data-lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Yuri Podolin | Digital Archive</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#0a0a0a] text-neutral-200 font-sans antialiased selection:bg-neutral-800">
+
+    <!-- Навигация -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/70 backdrop-blur-md border-b border-neutral-900">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="/" class="font-serif text-2xl tracking-wide font-medium text-neutral-100">Y. Podolin</a>
+            
+            <div class="flex items-center gap-8">
+                <nav class="hidden md:flex gap-8 text-sm font-medium text-neutral-400">
+                    <a href="#gallery" class="hover:text-neutral-100 transition-colors">
+                        <span class="lang-ru">Галерея</span>
+                        <span class="lang-en">Gallery</span>
+                    </a>
+                    <a href="#about" class="reveal hover:text-neutral-100 transition-colors">
+                        <span class="lang-ru">О художнике</span>
+                        <span class="lang-en">About</span>
+                    </a>
+                    <a href="#contacts" class="hover:text-neutral-100 transition-colors">
+                        <span class="lang-ru">Контакты</span>
+                        <span class="lang-en">Contacts</span>
+                    </a>
+                </nav>
+
+                <!-- Переключатель языков -->
+                <div class="flex gap-2 text-xs font-medium border border-neutral-800 p-1 rounded bg-neutral-900/50">
+                    <button id="btn-ru" class="px-2 py-1 rounded transition-colors lang-btn-active">RU</button>
+                    <button id="btn-en" class="px-2 py-1 rounded transition-colors text-neutral-500 hover:text-neutral-200">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Первый экран с разделенным слайдером (Hero Split) -->
+        <section class="relative min-h-screen md:h-screen flex flex-col md:grid md:grid-cols-2 bg-[#0a0a0a] pt-20 overflow-hidden">
+            
+            <!-- Левая половина: Смысловой блок -->
+            <div class="flex items-center justify-center px-8 py-16 md:py-0 border-b md:border-b-0 md:border-r border-neutral-900/60 z-20 bg-[#0a0a0a]">
+                <div class="max-w-lg w-full text-left space-y-8 md:pr-8">
+                    <span class="block text-xs tracking-[0.3em] uppercase text-neutral-500 font-medium">
+                        <span class="lang-ru">Частное собрание</span>
+                        <span class="lang-en">Private Collection</span>
+                    </span>
+                    
+                    <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight text-neutral-100">
+                        <span class="lang-ru">Оригинальная графика <br/>и эстампы</span>
+                        <span class="lang-en">Original Graphics <br/>& Prints</span>
+                    </h1>
+                    
+                    <p class="text-sm md:text-base text-neutral-400 font-light leading-relaxed max-w-md">
+                        <span class="lang-ru">Цифровой архив камерных работ классика белорусского искусства Юрия Подолина. Сангина, монотипия, цветная литография.</span>
+                        <span class="lang-en">Digital archive of studio works by the classic of Belarusian art Yuri Podolin. Sanguine, monotype, color lithography.</span>
+                    </p>
+                    
+                    <div class="pt-4">
+                        <a href="#gallery" class="reveal inline-block border border-neutral-600 text-neutral-100 px-8 py-3 text-xs font-medium tracking-[0.2em] uppercase hover:bg-neutral-800 hover:border-neutral-500 transition-all duration-300 rounded-md">
+                            <span class="lang-ru">Увидеть коллекцию</span>
+                            <span class="lang-en">Explore Collection</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая половина: Интерактивный слайдер -->
+            <div class="relative bg-[#0d0d0d] h-[60vh] md:h-full overflow-hidden z-10">
+                
+                {artworks.map((art, index) => (
+                <div class="art-item group ...">
+                    <img 
+                        src={art.image} 
+                        alt={`Yuri Podolin masterpiece ${art.id}`} 
+                        /* Убрали max-w/max-h, добавили w-full h-full 
+                           object-cover заполнит всё пространство 
+                        */
+                        class={`hero-slide absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100 z-0' : 'opacity-0 -z-10'}`}
+                        loading={index < 3 ? "eager" : "lazy"}
+                    />
+                </div>
+                ))}
+            </div>
+
+        </section>
+        
+        <!-- Блок О художнике -->
+        <section id="about" class="py-32 px-6 bg-[#0d0d0d] border-b border-neutral-900">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="font-serif text-4xl mb-12 text-center text-neutral-100">
+                    <span class="lang-ru">О мастере</span>
+                    <span class="lang-en">About the Artist</span>
+                </h2>
+                <div class="space-y-6 text-base md:text-lg text-neutral-400 font-light leading-relaxed text-justify">
+                    <div class="lang-ru space-y-6">
+                        <p>Юрий Подолин — знаковое имя в искусстве Беларуси, мастер, чье творчество объединяет строгую академическую школу и глубокий символизм. Его художественный язык отличается безупречным владением линией, тонким пониманием формы и деликатной работой со сложными фактурами.</p>
+                        <p>Представленная коллекция — это уникальный архив камерной и тиражной графики автора, созданный в начале 2000-х годов. В собрание вошли оригинальные фигуративные наброски сангиной, экспериментальные монотипии и многоцветная печатная графика.</p>
+                        <p>Эти работы демонстрируют зрелый авторский стиль и академическую глубину. Сегодня камерная графика такого уровня становится утонченным акцентом для современных архитектурных пространств, добавляя интерьерам подлинную художественную ценность.</p>
+                    </div>
+                    <div class="lang-en space-y-6">
+                        <p>Yuri Podolin is a landmark name in Belarusian art, a master whose work combines a rigorous academic school with deep symbolism. His artistic language is distinguished by a flawless mastery of line, a subtle understanding of form, and delicate work with complex textures.</p>
+                        <p>The presented collection is a unique archive of the author's studio and print graphics, created in the early 2000s. The collection includes original figurative sketches in sanguine, experimental monotypes, and multicolored printed graphics.</p>
+                        <p>These works demonstrate a mature signature style and academic depth. Today, studio graphics of this caliber become a sophisticated accent for modern architectural spaces, adding genuine artistic value to interiors.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок Галереи -->
+        <section id="gallery" class="py-32 px-6 bg-[#0a0a0a]">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-end justify-between mb-16 border-b border-neutral-900 pb-6">
+                    <h2 class="font-serif text-4xl text-neutral-100">
+                        <span class="lang-ru">Архив работ</span>
+                        <span class="lang-en">Works Archive</span>
+                    </h2>
+                    <div class="text-sm text-neutral-500 font-mono">
+                        <span>Coll. №01-51</span>
+                    </div>
+                </div>
+
+                <!-- Masonry Сетка (также подтягивает JPG) -->
+                <div class="columns-1 sm:columns-2 md:columns-3 gap-8 space-y-8">
+                    {artworks.map((art, index) => (
+                        <div 
+                            class="reveal art-item group relative block overflow-hidden bg-neutral-900 break-inside-avoid border border-neutral-900/60 rounded-sm cursor-pointer"
+                            data-index={index}
+                            data-src={art.image}
+                            data-id={art.id}
+                        >
+                            <img 
+                                src={art.image} 
+                                alt={`Yuri Podolin - ${art.id}`} 
+                                class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                                loading="lazy"
+                            />
+                            
+                            <!-- Информационный оверлей при наведении -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#050505]/95 via-[#050505]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 text-neutral-200 pointer-events-none">
+                                <span class="text-xs font-mono tracking-widest text-neutral-400 mb-1">{art.id}</span>
+                                <h3 class="font-serif text-xl text-neutral-100 mb-2 drop-shadow-md">
+                                    <span class="lang-ru">Оригинальная графика</span>
+                                    <span class="lang-en">Original Artwork</span>
+                                </h3>
+                                <div class="flex justify-between items-center text-xs font-light text-neutral-400 border-t border-neutral-800 pt-3 mt-2">
+                                    <span>
+                                        <span class="lang-ru">Бумага</span>
+                                        <span class="lang-en">Paper</span>
+                                    </span>
+                                    <span>2000s</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок Контактов -->
+        <section id="contacts" class="reveal py-32 px-6 bg-[#0d0d0d] border-t border-neutral-900">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="font-serif text-4xl mb-6 text-neutral-100">
+                    <span class="lang-ru">Контакты</span>
+                    <span class="lang-en">Contacts</span>
+                </h2>
+                <p class="text-neutral-400 font-light mb-12 max-w-md mx-auto">
+                    <span class="lang-ru">По вопросам экспонирования, сотрудничества с архитекторами и дизайнерами или получения дополнительной информации об архиве:</span>
+                    <span class="lang-en">For inquiries regarding exhibitions, collaboration with architects and designers, or further information about the archive:</span>
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <a href="mailto:kaleda.pavel@gmail.com" class="w-full sm:w-auto inline-block border border-neutral-600 text-neutral-300 px-8 py-4 text-sm tracking-wider uppercase hover:bg-neutral-800 hover:text-white transition-colors duration-300 rounded-md">
+                        Email
+                    </a>
+                    <a href="https://t.me/naverhoo" target="_blank" class="w-full sm:w-auto inline-block border border-neutral-600 text-neutral-300 px-8 py-4 text-sm tracking-wider uppercase hover:bg-neutral-800 hover:text-white transition-colors duration-300 rounded-md">
+                        Telegram
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Компонент Lightbox -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-[#050505]/98 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-between p-4 md:p-8">
+        <div class="absolute inset-0 cursor-zoom-out" id="lightbox-bg"></div>
+        <div class="relative z-10 flex flex-col justify-between h-full w-full">
+            <div class="flex justify-between items-center w-full max-w-7xl mx-auto h-16 px-4">
+                <span id="lightbox-id" class="font-mono text-sm tracking-widest text-neutral-400"></span>
+                <button id="lightbox-close" class="text-neutral-400 hover:text-white transition-colors text-xs tracking-widest uppercase p-2 cursor-pointer">
+                    <span class="lang-ru">Закрыть ✕</span>
+                    <span class="lang-en">Close ✕</span>
+                </button>
+            </div>
+
+            <div class="relative flex items-center justify-center flex-1 max-w-5xl w-full mx-auto my-4 px-4 md:px-12">
+                <button id="lightbox-prev" class="absolute left-0 lg:-left-12 z-20 p-4 text-neutral-500 hover:text-white transition-colors text-3xl font-light select-none hidden md:block cursor-pointer">←</button>
+                <img id="lightbox-img" src="" alt="Large View" class="max-w-full max-h-[70vh] md:max-h-[75vh] object-contain select-none shadow-2xl border border-neutral-900/50 cursor-pointer" />
+                <button id="lightbox-next" class="absolute right-0 lg:-right-12 z-20 p-4 text-neutral-500 hover:text-white transition-colors text-3xl font-light select-none hidden md:block cursor-pointer">→</button>
+            </div>
+
+            <div class="h-16 flex items-center justify-center text-xs text-neutral-500 font-mono">
+                <span id="lightbox-counter"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script>
+        // --- 1. ПЕРЕКЛЮЧЕНИЕ ЯЗЫКОВ ---
+        const btnRu = document.getElementById('btn-ru');
+        const btnEn = document.getElementById('btn-en');
+        const html = document.documentElement;
+
+        function setLang(lang) {
+            html.setAttribute('data-lang', lang);
+            if (lang === 'ru') {
+                btnRu.classList.add('lang-btn-active');
+                btnRu.classList.remove('text-neutral-500');
+                btnEn.classList.remove('lang-btn-active');
+                btnEn.classList.add('text-neutral-500');
+            } else {
+                btnEn.classList.add('lang-btn-active');
+                btnEn.classList.remove('text-neutral-500');
+                btnRu.classList.remove('lang-btn-active');
+                btnRu.classList.add('text-neutral-500');
+            }
+        }
+
+        btnRu.addEventListener('click', () => setLang('ru'));
+        btnEn.addEventListener('click', () => setLang('en'));
+
+
+        // --- 2. АВТОМАТИЧЕСКИЙ СЛАЙДЕР ОБЛОЖКИ (HERO) ---
+        // Теперь скрипт автоматически подхватит все 51 фото
+        const slides = document.querySelectorAll('.hero-slide') as NodeListOf<HTMLElement>;
+        let currentSlideIndex = 0;
+
+        function runHeroSlider() {
+            if (slides.length <= 1) return;
+            
+            setInterval(() => {
+                const previousSlide = slides[currentSlideIndex];
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                const nextSlide = slides[currentSlideIndex];
+
+                previousSlide.classList.remove('opacity-100', 'z-0');
+                previousSlide.classList.add('opacity-0', '-z-10');
+
+                nextSlide.classList.remove('opacity-0', '-z-10');
+                nextSlide.classList.add('opacity-100', 'z-0');
+            }, 5000);
+        }
+        
+        runHeroSlider();
+
+
+        // --- 3. ЛОГИКА ГАЛЕРЕИ (LIGHTBOX) ---
+        const artItems = document.querySelectorAll('.art-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+        const lightboxId = document.getElementById('lightbox-id');
+        const lightboxCounter = document.getElementById('lightbox-counter');
+        const lightboxBg = document.getElementById('lightbox-bg');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+
+        let currentIndex = 0;
+
+        function openLightbox(index: number) {
+            currentIndex = index;
+            const item = artItems[currentIndex];
+            const src = item.getAttribute('data-src') || '';
+            const id = item.getAttribute('data-id') || '';
+
+            if (lightboxImg) lightboxImg.src = src;
+            if (lightboxId) lightboxId.textContent = id;
+            if (lightboxCounter) lightboxCounter.textContent = `${currentIndex + 1} / ${artItems.length}`;
+
+            lightbox?.classList.remove('pointer-events-none', 'opacity-0');
+            lightbox?.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox?.classList.remove('opacity-100');
+            lightbox?.classList.add('pointer-events-none', 'opacity-0');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                if (lightboxImg) lightboxImg.src = '';
+            }, 300);
+        }
+
+        function showNext() {
+            if (currentIndex < artItems.length - 1) {
+                openLightbox(currentIndex + 1);
+            } else {
+                openLightbox(0);
+            }
+        }
+
+        function showPrev() {
+            if (currentIndex > 0) {
+                openLightbox(currentIndex - 1);
+            } else {
+                openLightbox(artItems.length - 1);
+            }
+        }
+
+        artItems.forEach((item, index) => {
+            item.addEventListener('click', () => openLightbox(index));
+        });
+
+        lightboxClose?.addEventListener('click', closeLightbox);
+        lightboxBg?.addEventListener('click', closeLightbox);
+        lightboxNext?.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+        lightboxPrev?.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+        lightboxImg?.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (lightbox?.classList.contains('opacity-100')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') showNext();
+                if (e.key === 'ArrowLeft') showPrev();
+            }
+        });
+    </script>
+</body>
+<style is:global>
+    body { font-family: 'Inter', sans-serif; }
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    html { scroll-behavior: smooth; }
+
+    /* --- Анимации появления --- */
+    .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+    }
+    .reveal.active {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+
+    img { image-rendering: -webkit-optimize-contrast; image-rendering: quality; }
+    html[data-lang="ru"] .lang-en { display: none !important; }
+    html[data-lang="en"] .lang-ru { display: none !important; }
+    .lang-btn-active { background-color: #262626; color: #f5f5f5 !important; }
+</style>
+
+<script>
+    // ... (весь твой код скрипта оставляем как есть, просто в конец добавляем этот Observer)
+
+    // --- ЛОГИКА ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </html>
