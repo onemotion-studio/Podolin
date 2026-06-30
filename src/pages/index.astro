@@ -60,10 +60,10 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
     <main>
         <!-- Первый экран с разделенным слайдером (Hero Split) -->
         <!-- Первый экран с разделенным слайдером (Hero Split) -->
-        <section class="relative min-h-[90vh] md:h-screen flex flex-col-reverse md:flex-row bg-[#0a0a0a] pt-20 overflow-hidden">
+        <section class="relative min-h-[90vh] md:h-screen flex flex-col md:flex-row bg-[#0a0a0a] pt-20 overflow-hidden">
             
-            <!-- Слайдер (на мобильном будет сверху, на десктопе — правая часть) -->
-            <div class="relative bg-[#0d0d0d] h-[50vh] md:h-full md:w-1/2 overflow-hidden z-10 flex-1">
+            <!-- Слайдер (на мобилке сверху, на десктопе слева) -->
+            <div class="relative bg-[#0d0d0d] h-[50vh] md:h-full md:w-1/2 overflow-hidden z-10">
                 <div class="absolute inset-0 bg-radial from-neutral-900/40 to-transparent pointer-events-none z-10"></div>
                 
                 {artworks.map((art, index) => (
@@ -76,8 +76,8 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
                 ))}
             </div>
 
-            <!-- Блок с текстом (на мобильном будет снизу, на десктопе — левая часть) -->
-            <div class="flex items-center justify-center px-8 py-16 md:py-0 md:w-1/2 border-b md:border-b-0 md:border-l border-neutral-900/60 z-20 bg-[#0a0a0a] flex-1">
+            <!-- Блок с текстом (на мобилке под слайдером, на десктопе справа) -->
+            <div class="flex items-center justify-center px-8 py-16 md:py-0 md:w-1/2 border-b md:border-b-0 md:border-l border-neutral-900/60 z-20 bg-[#0a0a0a]">
                 <div class="max-w-lg w-full text-left space-y-8 md:pl-8">
                     <span class="block text-xs tracking-[0.3em] uppercase text-neutral-500 font-medium">
                         <span class="lang-ru">Частное собрание</span>
@@ -90,13 +90,13 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
                     </h1>
                     
                     <p class="text-sm md:text-base text-neutral-400 font-light leading-relaxed max-w-md">
-                        <span class="lang-ru">Цифровой архив камерных работ классика белорусского искусства Юрия Подолина. Сангина, монотипия, цветная литография.</span>
-                        <span class="lang-en">Digital archive of studio works by the classic of Belarusian art Yuri Podolin. Sanguine, monotype, color lithography.</span>
+                        <span class="lang-ru">Коллекция камерных работ классика белорусского искусства Юрия Подолина. Сангина, монотипия, цветная литография.</span>
+                        <span class="lang-en">Collection of studio works by the classic of Belarusian art Yuri Podolin. Sanguine, monotype, color lithography.</span>
                     </p>
                     
                     <div class="pt-4">
                         <a href="#gallery" class="inline-block border border-neutral-600 text-neutral-100 px-8 py-3 text-xs font-medium tracking-[0.2em] uppercase hover:bg-neutral-800 transition-all duration-300 rounded-md">
-                            <span class="lang-ru">Смотреть архив</span>
+                            <span class="lang-ru">Увидеть коллекцию</span>
                             <span class="lang-en">Explore Archive</span>
                         </a>
                     </div>
@@ -131,8 +131,8 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-end justify-between mb-16 border-b border-neutral-900 pb-6">
                     <h2 class="font-serif text-4xl text-neutral-100">
-                        <span class="lang-ru">Архив работ</span>
-                        <span class="lang-en">Works Archive</span>
+                        <span class="lang-ru">Коллекция</span>
+                        <span class="lang-en">Collection</span>
                     </h2>
                     <div class="text-sm text-neutral-500 font-mono">
                         <span>Coll. №01-51</span>
@@ -184,8 +184,8 @@ const artworks = Array.from({ length: 51 }, (_, index) => {
                     <span class="lang-en">Contacts</span>
                 </h2>
                 <p class="text-neutral-400 font-light mb-12 max-w-md mx-auto">
-                    <span class="lang-ru">По вопросам экспонирования, сотрудничества с архитекторами и дизайнерами или получения дополнительной информации об архиве:</span>
-                    <span class="lang-en">For inquiries regarding exhibitions, collaboration with architects and designers, or further information about the archive:</span>
+                    <span class="lang-ru">По вопросам экспонирования, сотрудничества с архитекторами и дизайнерами или получения дополнительной информации о коллекции:</span>
+                    <span class="lang-en">For inquiries regarding exhibitions, collaboration with architects and designers, or further information about the collection:</span>
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
